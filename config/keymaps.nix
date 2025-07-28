@@ -9,48 +9,32 @@
         silent = true;
       };
     }
-
-    # Oil.nvim - File explorer
+    #TODO: change me
+    # Window navigation
     {
       mode = "n";
-      key = "-";
-      action = "<CMD>Oil<CR>";
-      options = {
-        desc = "Open parent directory";
-        silent = true;
-      };
+      key = "<C-h>";
+      action = "<C-w>h";
+      options.desc = "Go to left window";
     }
-    # TODO: find some good binds for buffer nav
-    # or just use existing moonlander shortcuts
-
-    ## Window navigation
-    #{
-    #  mode = "n";
-    #  key = "<C-h>";
-    #  action = "<C-w>h";
-    #  options.desc = "Go to left window";
-    #}
-    #{
-    #  mode = "n";
-    #  key = "<C-j>";
-    #  action = "<C-w>j";
-    #  options.desc = "Go to lower window";
-    #}
-    #{
-    #  mode = "n";
-    #  key = "<C-k>";
-    #  action = "<C-w>k";
-    #  options.desc = "Go to upper window";
-    #}
-    #{
-    #  mode = "n";
-    #  key = "<C-l>";
-    #  action = "<C-w>l";
-    #  options.desc = "Go to right window";
-    #}
-
-    # TODO: find some good binds for buffer nav
-    # or just use existing moonlander shortcuts
+    {
+      mode = "n";
+      key = "<C-j>";
+      action = "<C-w>j";
+      options.desc = "Go to lower window";
+    }
+    {
+      mode = "n";
+      key = "<C-k>";
+      action = "<C-w>k";
+      options.desc = "Go to upper window";
+    }
+    {
+      mode = "n";
+      key = "<C-l>";
+      action = "<C-w>l";
+      options.desc = "Go to right window";
+    }
 
     # Resize windows with arrows
     {

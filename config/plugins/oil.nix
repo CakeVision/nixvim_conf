@@ -64,4 +64,26 @@
       };
     };
   };
+
+  # Oil-specific keymaps
+  keymaps = [
+    {
+      mode = "n";
+      key = "-";
+      action = "<CMD>Oil<CR>";
+      options = {
+        desc = "Open parent directory";
+        silent = true;
+      };
+    }
+    {
+      mode = "n";
+      key = "<leader>e";
+      action = "<CMD>Oil<CR>";
+      options = {
+        desc = "File explorer";
+        silent = true;
+      };
+    }
+  ];
 }

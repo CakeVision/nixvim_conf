@@ -4,10 +4,10 @@
 
     settings = {
       # Delay before showing the popup (in ms)
-      delay = 500;
+      delay = 100;
 
       # Configure which-key display
-      preset = "modern"; # "classic", "modern", or "helix"
+      preset = "helix"; # "classic", "modern", or "helix"
 
       # Replace keycodes (<CR> -> <Enter>, <BS> -> <Backspace>, etc.)
       replace = {
@@ -38,27 +38,23 @@
         spacing = 3;
         align = "left"; # left, center, right
       };
-    };
 
-    # Register keymap groups
-    # This is where we define the '+' prefixes you see in which-key
-    registrations = {
-      # Leader mappings
-      "<leader>b" = "+buffers";
-      "<leader>c" = "+code";
-      "<leader>f" = "+find";
-      "<leader>g" = "+git";
-      "<leader>l" = "+lsp";
-      "<leader>s" = "+search";
-      "<leader>t" = "+toggle";
-      "<leader>w" = "+windows";
-      "<leader>x" = "+diagnostics";
-
-      # Other prefix mappings
-      "g" = "+goto";
-      "]" = "+next";
-      "[" = "+prev";
-      "z" = "+fold";
+      # New v3 spec format for defining groups
+      spec = [
+        {__raw = "{ '<leader>b', group = 'buffers' }";}
+        {__raw = "{ '<leader>c', group = 'code' }";}
+        {__raw = "{ '<leader>f', group = 'find' }";}
+        {__raw = "{ '<leader>g', group = 'git' }";}
+        {__raw = "{ '<leader>l', group = 'lsp' }";}
+        {__raw = "{ '<leader>s', group = 'search' }";}
+        {__raw = "{ '<leader>t', group = 'toggle' }";}
+        {__raw = "{ '<leader>w', group = 'windows' }";}
+        {__raw = "{ '<leader>x', group = 'diagnostics' }";}
+        {__raw = "{ 'g', group = 'goto' }";}
+        {__raw = "{ ']', group = 'next' }";}
+        {__raw = "{ '[', group = 'prev' }";}
+        {__raw = "{ 'z', group = 'fold' }";}
+      ];
     };
   };
 
