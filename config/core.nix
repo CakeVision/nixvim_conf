@@ -1,4 +1,5 @@
 {
+   
   # Global variables
   globals = {
     mapleader = " ";
@@ -6,6 +7,7 @@
   };
 
   # Neovim options
+
   opts = {
     # Line numbers
     number = true;

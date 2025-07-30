@@ -51,7 +51,7 @@
 
         # Warnings
         WARN = {
-          icon = "⚠️"; # Warning sign
+          icon = "⚠"; # Warning sign without extra space
           color = "warning";
           alt = ["WARNING" "XXX"];
         };
@@ -187,13 +187,52 @@
       };
     }
 
-    # Search todo comments with Telescope (we'll use this later)
     {
       mode = "n";
       key = "<leader>st";
-      action = "<cmd>TodoTelescope<cr>";
+      action.__raw = ''
+        function()
+          -- Search for TODO comments using Telescope
+          require('telescope.builtin').grep_string({
+            prompt_title = "Find TODOs",
+            search = "\\b(TODO|FIXME|HACK|WARN|PERF|NOTE|TEST|REVIEW|QUESTION):",
+            use_regex = true,
+            theme = "ivy",
+            initial_mode = "normal",
+            layout_config = {
+              height = 0.4,
+            },
+          })
+        end
+      '';
       options = {
         desc = "Search todos";
+        silent = true;
+      };
+    }
+
+    # Quick list of todos in current buffer
+    {
+      mode = "n";
+      key = "<leader>sT";
+      action.__raw = ''
+        function()
+          -- Search TODOs in current buffer only
+          require('telescope.builtin').current_buffer_fuzzy_find({
+            prompt_title = "Buffer TODOs",
+            default_text = "TODO:|FIXME:|HACK:|WARN:|PERF:|NOTE:|TEST:|REVIEW:|QUESTION:",
+            theme = "dropdown",
+            previewer = false,
+            initial_mode = "normal",
+            layout_config = {
+              width = 0.6,
+              height = 0.4,
+            },
+          })
+        end
+      '';
+      options = {
+        desc = "Buffer todos";
         silent = true;
       };
     }
@@ -202,7 +241,43 @@
     {
       mode = "n";
       key = "<leader>ct";
-      action = "O<esc>gccA TODO: 📋 <esc>A";
+      action.__raw = ''
+        function()
+          local line = vim.api.nvim_get_current_line()
+          local indent = line:match("^%s*") or ""
+          -- Create a new line above current position
+          vim.cmd("normal! O")
+          -- Set the line content
+          vim.api.nvim_set_current_line(indent .. "TODO: 📋 ")
+          -- Comment the line
+          require("Comment.api").toggle.linewise.current()
+          -- Go to end of line and enter insert mode
+          vim.cmd("normal! A")
+        end
+      '';
+      options = {
+        desc = "Insert TODO comment";
+        silent = true;
+      };
+    }
+
+    {
+      mode = "n";
+      key = "<leader>cf";
+      action.__raw = ''
+        function()
+          local line = vim.api.nvim_get_current_line()
+          local indent = line:match("^%s*") or ""
+          -- Create a new line above current position
+          vim.cmd("normal! O")
+          -- Set the line content
+          vim.api.nvim_set_current_line(indent .. "FIXME: 🔧 ")
+          -- Comment the line
+          require("Comment.api").toggle.linewise.current()
+          -- Go to end of line and enter insert mode
+          vim.cmd("normal! A")
+        end
+      '';
       options = {
         desc = "Insert TODO comment";
         silent = true;
@@ -210,17 +285,21 @@
     }
     {
       mode = "n";
-      key = "<leader>cf";
-      action = "O<esc>gccA FIXME: 🔧 <esc>A";
-      options = {
-        desc = "Insert FIXME comment";
-        silent = true;
-      };
-    }
-    {
-      mode = "n";
       key = "<leader>cn";
-      action = "O<esc>gccA NOTE: 📝 <esc>A";
+      action.__raw = ''
+        function()
+          local line = vim.api.nvim_get_current_line()
+          local indent = line:match("^%s*") or ""
+          -- Create a new line above current position
+          vim.cmd("normal! O")
+          -- Set the line content
+          vim.api.nvim_set_current_line(indent .. "NOTE: 📝 ")
+          -- Comment the line
+          require("Comment.api").toggle.linewise.current()
+          -- Go to end of line and enter insert mode
+          vim.cmd("normal! A")
+        end
+      '';
       options = {
         desc = "Insert NOTE comment";
         silent = true;
@@ -229,7 +308,20 @@
     {
       mode = "n";
       key = "<leader>ch";
-      action = "O<esc>gccA HACK: 🔨 <esc>A";
+      action.__raw = ''
+        function()
+          local line = vim.api.nvim_get_current_line()
+          local indent = line:match("^%s*") or ""
+          -- Create a new line above current position
+          vim.cmd("normal! O")
+          -- Set the line content
+          vim.api.nvim_set_current_line(indent .. "HACK: 🔨 ")
+          -- Comment the line
+          require("Comment.api").toggle.linewise.current()
+          -- Go to end of line and enter insert mode
+          vim.cmd("normal! A")
+        end
+      '';
       options = {
         desc = "Insert HACK comment";
         silent = true;
@@ -238,7 +330,20 @@
     {
       mode = "n";
       key = "<leader>cw";
-      action = "O<esc>gccA WARN: ⚠️ <esc>A";
+      action.__raw = ''
+        function()
+          local line = vim.api.nvim_get_current_line()
+          local indent = line:match("^%s*") or ""
+          -- Create a new line above current position
+          vim.cmd("normal! O")
+          -- Set the line content
+          vim.api.nvim_set_current_line(indent .. "WARN: ⚠ ")
+          -- Comment the line
+          require("Comment.api").toggle.linewise.current()
+          -- Go to end of line and enter insert mode
+          vim.cmd("normal! A")
+        end
+      '';
       options = {
         desc = "Insert WARN comment";
         silent = true;
@@ -247,7 +352,20 @@
     {
       mode = "n";
       key = "<leader>cq";
-      action = "O<esc>gccA QUESTION: ❓ <esc>A";
+      action.__raw = ''
+        function()
+          local line = vim.api.nvim_get_current_line()
+          local indent = line:match("^%s*") or ""
+          -- Create a new line above current position
+          vim.cmd("normal! O")
+          -- Set the line content
+          vim.api.nvim_set_current_line(indent .. "QUESTION: ❓ ")
+          -- Comment the line
+          require("Comment.api").toggle.linewise.current()
+          -- Go to end of line and enter insert mode
+          vim.cmd("normal! A")
+        end
+      '';
       options = {
         desc = "Insert QUESTION comment";
         silent = true;
