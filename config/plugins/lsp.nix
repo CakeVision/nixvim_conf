@@ -164,18 +164,20 @@
     };
   };
 
-  # Show diagnostics as virtual text
-  diagnostics.settings = {
-    virtual_text = {
-      severity = "error"; # Only show errors as virtual text
-    };
-    signs = true;
-    underline = true;
-    update_in_insert = false;
-    severity_sort = true;
-    float = {
-      border = "rounded";
-      source = "if_many";
+  # Show diagnostics configuration
+  plugins.lsp.settings = {
+    diagnostics = {
+      virtual_text = {
+        severity = { min = "ERROR" }; # Only show errors as virtual text
+      };
+      signs = true;
+      underline = true;
+      update_in_insert = false;
+      severity_sort = true;
+      float = {
+        border = "rounded";
+        source = true;
+      };
     };
   };
 
@@ -285,12 +287,20 @@
 
   # Custom Lua configuration for LSP
   extraConfigLua = ''
-    -- Customize diagnostic signs
+    -- Customize diagnostic signs using the modern API
     local signs = { Error = "✘", Warn = "▲", Hint = "⚡", Info = "ℹ" }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-    end
+    
+    -- Configure diagnostic signs
+    vim.diagnostic.config({
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = signs.Error,
+          [vim.diagnostic.severity.WARN] = signs.Warn,
+          [vim.diagnostic.severity.HINT] = signs.Hint,
+          [vim.diagnostic.severity.INFO] = signs.Info,
+        },
+      },
+    })
 
     -- Show diagnostics on hover
     vim.api.nvim_create_autocmd("CursorHold", {

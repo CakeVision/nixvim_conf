@@ -69,12 +69,12 @@
           COLORTERM = "truecolor";
         };
 
-        file_previewer = "require('telescope.previewers').vim_buffer_cat.new";
-        grep_previewer = "require('telescope.previewers').vim_buffer_vimgrep.new";
-        qflist_previewer = "require('telescope.previewers').vim_buffer_qflist.new";
+        file_previewer.__raw = "require('telescope.previewers').vim_buffer_cat.new";
+        grep_previewer.__raw = "require('telescope.previewers').vim_buffer_vimgrep.new";
+        qflist_previewer.__raw = "require('telescope.previewers').vim_buffer_qflist.new";
 
         # Developer configurations
-        buffer_previewer_maker = "require('telescope.previewers').buffer_previewer_maker";
+        buffer_previewer_maker.__raw = "require('telescope.previewers').buffer_previewer_maker";
 
         mappings = {
           i = {
@@ -89,10 +89,30 @@
             "<C-t>" = "select_tab";
             "<C-u>" = "preview_scrolling_up";
             "<C-d>" = "preview_scrolling_down";
-            "<C-q>" = "send_to_qflist + open_qflist";
-            "<M-q>" = "send_selected_to_qflist + open_qflist";
-            "<Tab>" = "toggle_selection + move_selection_worse";
-            "<S-Tab>" = "toggle_selection + move_selection_better";
+            "<C-q>".__raw = ''
+              function(prompt_bufnr)
+                require("telescope.actions").send_to_qflist(prompt_bufnr)
+                require("telescope.actions").open_qflist(prompt_bufnr)
+              end
+            '';
+            "<M-q>".__raw = ''
+              function(prompt_bufnr)
+                require("telescope.actions").send_selected_to_qflist(prompt_bufnr)
+                require("telescope.actions").open_qflist(prompt_bufnr)
+              end
+            '';
+            "<Tab>".__raw = ''
+              function(prompt_bufnr)
+                require("telescope.actions").toggle_selection(prompt_bufnr)
+                require("telescope.actions").move_selection_worse(prompt_bufnr)
+              end
+            '';
+            "<S-Tab>".__raw = ''
+              function(prompt_bufnr)
+                require("telescope.actions").toggle_selection(prompt_bufnr)
+                require("telescope.actions").move_selection_better(prompt_bufnr)
+              end
+            '';
             "<C-l>" = "complete_tag";
             "<C-_>" = "which_key";
           };
@@ -102,10 +122,30 @@
             "<C-x>" = "select_horizontal";
             "<C-v>" = "select_vertical";
             "<C-t>" = "select_tab";
-            "<Tab>" = "toggle_selection + move_selection_worse";
-            "<S-Tab>" = "toggle_selection + move_selection_better";
-            "<C-q>" = "send_to_qflist + open_qflist";
-            "<M-q>" = "send_selected_to_qflist + open_qflist";
+            "<Tab>".__raw = ''
+              function(prompt_bufnr)
+                require("telescope.actions").toggle_selection(prompt_bufnr)
+                require("telescope.actions").move_selection_worse(prompt_bufnr)
+              end
+            '';
+            "<S-Tab>".__raw = ''
+              function(prompt_bufnr)
+                require("telescope.actions").toggle_selection(prompt_bufnr)
+                require("telescope.actions").move_selection_better(prompt_bufnr)
+              end
+            '';
+            "<C-q>".__raw = ''
+              function(prompt_bufnr)
+                require("telescope.actions").send_to_qflist(prompt_bufnr)
+                require("telescope.actions").open_qflist(prompt_bufnr)
+              end
+            '';
+            "<M-q>".__raw = ''
+              function(prompt_bufnr)
+                require("telescope.actions").send_selected_to_qflist(prompt_bufnr)
+                require("telescope.actions").open_qflist(prompt_bufnr)
+              end
+            '';
             "j" = "move_selection_next";
             "k" = "move_selection_previous";
             "H" = "move_to_top";
