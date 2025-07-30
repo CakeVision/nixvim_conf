@@ -10,7 +10,8 @@
       };
     }
     #TODO: change me
-    # Window navigation
+    # Window navigation(maybe not, it is really comfy :/)
+    # Deal with it future me 
     {
       mode = "n";
       key = "<C-h>";

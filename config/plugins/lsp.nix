@@ -164,23 +164,6 @@
     };
   };
 
-  # Show diagnostics configuration
-  plugins.lsp.settings = {
-    diagnostics = {
-      virtual_text = {
-        severity = { min = "ERROR" }; # Only show errors as virtual text
-      };
-      signs = true;
-      underline = true;
-      update_in_insert = false;
-      severity_sort = true;
-      float = {
-        border = "rounded";
-        source = true;
-      };
-    };
-  };
-
   # Extra packages needed for LSP functionality
   extraPackages = with pkgs; [
     # Go tools
@@ -289,9 +272,12 @@
   extraConfigLua = ''
     -- Customize diagnostic signs using the modern API
     local signs = { Error = "✘", Warn = "▲", Hint = "⚡", Info = "ℹ" }
-    
-    -- Configure diagnostic signs
+
+    -- Configure diagnostics with signs and other settings
     vim.diagnostic.config({
+      virtual_text = {
+        severity = { min = vim.diagnostic.severity.ERROR },
+      },
       signs = {
         text = {
           [vim.diagnostic.severity.ERROR] = signs.Error,
@@ -299,6 +285,13 @@
           [vim.diagnostic.severity.HINT] = signs.Hint,
           [vim.diagnostic.severity.INFO] = signs.Info,
         },
+      },
+      underline = true,
+      update_in_insert = false,
+      severity_sort = true,
+      float = {
+        border = 'rounded',
+        source = true,
       },
     })
 
