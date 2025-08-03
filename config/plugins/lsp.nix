@@ -69,6 +69,13 @@
           };
         };
       };
+      ruff = {
+        enable = true;
+        settings = {
+          organizeImports = true;
+          fixAll = true;
+        };
+      };
 
       # Alternative Python LSP (uncomment if you prefer this over pyright)
       # pylsp = {
@@ -263,6 +270,32 @@
       action = "<cmd>LspInfo<cr>";
       options = {
         desc = "LSP info";
+        silent = true;
+      };
+    }
+     {
+      mode = "n";
+      key = "<leader>co";
+      action = "<cmd>PyrightOrganizeImports<cr>";
+      options = {
+        desc = "Organize imports (Python)";
+        silent = true;
+      };
+    }
+     {
+      mode = "n";
+      key = "<leader>lo";
+      action.__raw = ''
+        function()
+          if vim.bo.filetype == "python" then
+            vim.cmd("PyrightOrganizeImports")
+          else
+            vim.notify("Organize imports not available for " .. vim.bo.filetype, vim.log.levels.INFO)
+          end
+        end
+      '';
+      options = {
+        desc = "Organize imports";
         silent = true;
       };
     }
