@@ -5,7 +5,9 @@
     ./lsp.nix
     ./treesitter.nix
     ./comments.nix
+    ./completion.nix
     ./colorscheme.nix
+    ./refactoring
     #Plugin dir
     ./telescope
   ];
