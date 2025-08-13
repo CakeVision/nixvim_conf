@@ -55,25 +55,173 @@
         };
       };
 
-      # Python
-      pyright = {
-        enable = true;
-        settings = {
-          python = {
-            analysis = {
-              autoSearchPaths = true;
-              typeCheckingMode = "standard";
-              useLibraryCodeForTypes = true;
-              diagnosticMode = "workspace";
-            };
-          };
-        };
-      };
+      # # Python
+      # pyright = {
+      #   enable = true;
+      #   settings = {
+      #     python = {
+      #       analysis = {
+      #         autoSearchPaths = true;
+      #         typeCheckingMode = "standard";
+      #         useLibraryCodeForTypes = true;
+      #         diagnosticMode = "workspace";
+      #       };
+      #     };
+      #   };
+      # };
       ruff = {
         enable = true;
         settings = {
           organizeImports = true;
           fixAll = true;
+        };
+      };
+
+      rust_analyzer = {
+        enable = true;
+        installCargo = true;
+        installRustc = true;
+        settings = {
+          # Enable proc-macro support (very important for many Rust projects)
+          cargo = {
+            buildScripts = {
+              enable = true;
+            };
+            allTargets = true;
+            # Load out-of-dir tests for support
+            loadOutDirsFromCheck = true;
+          };
+
+          # Enable procedural macros
+          procMacro = {
+            enable = true;
+            attributes = {
+              enable = true;
+            };
+          };
+
+          # Check configuration
+          checkOnSave = true;
+          check = {
+            command = "clippy"; # Use clippy instead of just check
+            extraArgs = ["--all-targets"]; # Check all targets
+            allTargets = true;
+          };
+
+          # Completion settings
+          completion = {
+            addSemicolonToUnit = true;
+            autoimport = {
+              enable = true;
+            };
+            callable = {
+              snippets = "fill_arguments";
+            };
+          };
+
+          # Inlay hints (very useful for Rust!)
+          inlayHints = {
+            enable = true;
+            chainingHints = {
+              enable = true;
+            };
+            closingBraceHints = {
+              enable = true;
+              minLines = 25;
+            };
+            parameterHints = {
+              enable = true;
+            };
+            typeHints = {
+              enable = true;
+              hideClosureInitialization = false;
+              hideNamedConstructor = false;
+            };
+            # Show lifetime hints (advanced feature, you can disable if it's too noisy)
+            lifetimeElisionHints = {
+              enable = "skip_trivial";
+              useParameterNames = false;
+            };
+          };
+
+          # Hover configuration
+          hover = {
+            actions = {
+              enable = true;
+              debug = {
+                enable = true;
+              };
+              gotoTypeDef = {
+                enable = true;
+              };
+              implementations = {
+                enable = true;
+              };
+              run = {
+                enable = true;
+              };
+            };
+            documentation = {
+              enable = true;
+              keywords = {
+                enable = true;
+              };
+            };
+            memoryLayout = {
+              enable = true;
+            };
+          };
+
+          # Lens (code lenses) - shows things like "Run" and "Debug" above functions
+          lens = {
+            enable = true;
+            debug = {
+              enable = true;
+            };
+            implementations = {
+              enable = true;
+            };
+            references = {
+              adt = {
+                enable = false; # Can be noisy, enable if you want
+              };
+              enumVariant = {
+                enable = false;
+              };
+              method = {
+                enable = false;
+              };
+              trait = {
+                enable = false;
+              };
+            };
+            run = {
+              enable = true;
+            };
+          };
+
+          # Diagnostics
+          diagnostics = {
+            enable = true;
+            experimental = {
+              enable = false; # Enable for bleeding-edge diagnostics
+            };
+            styleLints = {
+              enable = false; # Enable for additional style lints
+            };
+          };
+
+          # Semantic highlighting
+          semanticHighlighting = {
+            strings = {
+              enable = true;
+            };
+          };
+
+          # Files configuration
+          files = {
+            watcher = "notify";
+          };
         };
       };
 
@@ -299,9 +447,41 @@
         silent = true;
       };
     }
+
+    {
+      mode = "n";
+      key = "<leader>rem";
+      action = "<cmd>lua require('telescope.builtin').lsp_document_symbols({ symbols = {'macro'} })<cr>";
+      options = {
+        desc = "Find macros";
+        silent = true;
+      };
+    }
+
+    # Rust-specific: View HIR
+    {
+      mode = "n";
+      key = "<leader>rh";
+      action = "<cmd>lua vim.lsp.buf.execute_command({ command = 'rust-analyzer.viewHir', arguments = { vim.uri_from_bufnr(0), vim.lsp.util.make_position_params().position } })<cr>";
+      options = {
+        desc = "View HIR";
+        silent = true;
+      };
+    }
+
+    # Rust-specific: Reload workspace
+    {
+      mode = "n";
+      key = "<leader>rr";
+      action = "<cmd>lua vim.lsp.buf.execute_command({ command = 'rust-analyzer.reloadWorkspace' })<cr>";
+      options = {
+        desc = "Reload workspace";
+        silent = true;
+      };
+    }
   ];
 
-  # Custom Lua configuration for LSP
+  
   extraConfigLua = ''
     -- Customize diagnostic signs using the modern API
     local signs = { Error = "✘", Warn = "▲", Hint = "⚡", Info = "ℹ" }
@@ -328,9 +508,10 @@
       },
     })
 
-    -- Show diagnostics on hover
+    -- Show diagnostics on hover (but only if there are diagnostics)
     vim.api.nvim_create_autocmd("CursorHold", {
       callback = function()
+        -- Only show diagnostics popup, not document highlight
         local opts = {
           focusable = false,
           close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
@@ -339,22 +520,86 @@
           prefix = ' ',
           scope = 'cursor',
         }
-        vim.diagnostic.open_float(nil, opts)
+        -- Only open float if there are diagnostics at cursor position
+        local diagnostics = vim.diagnostic.get(0, { lnum = vim.fn.line('.') - 1 })
+        if #diagnostics > 0 then
+          vim.diagnostic.open_float(nil, opts)
+        end
       end
     })
 
-    -- Highlight symbol under cursor
+    -- Highlight symbol under cursor (with proper capability checking)
     vim.api.nvim_create_autocmd("LspAttach", {
       callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
-        if client.server_capabilities.documentHighlightProvider then
+        local bufnr = args.buf
+        
+        -- Only set up document highlighting if the server supports it
+        if client and client.server_capabilities.documentHighlightProvider then
+          -- Create a local group for this buffer to avoid conflicts
+          local group = vim.api.nvim_create_augroup("lsp_document_highlight_" .. bufnr, { clear = true })
+          
           vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-            buffer = args.buf,
-            callback = vim.lsp.buf.document_highlight,
+            buffer = bufnr,
+            group = group,
+            callback = function()
+              -- Double check the client is still valid and supports highlighting
+              local current_clients = vim.lsp.get_clients({ bufnr = bufnr })
+              for _, c in ipairs(current_clients) do
+                if c.id == client.id and c.server_capabilities.documentHighlightProvider then
+                  vim.lsp.buf.document_highlight()
+                  break
+                end
+              end
+            end,
           })
+          
           vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-            buffer = args.buf,
-            callback = vim.lsp.buf.clear_references,
+            buffer = bufnr,
+            group = group,
+            callback = function()
+              vim.lsp.buf.clear_references()
+            end,
+          })
+         vim.api.nvim_create_autocmd("LspAttach", {
+              callback = function(args)
+                local client = vim.lsp.get_client_by_id(args.data.client_id)
+                if client.name == "rust_analyzer" then
+                  -- Enable inlay hints for Rust files
+                  if client.server_capabilities.inlayHintProvider then
+                    vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
+                  end
+                  
+                  -- Set up Rust-specific keymaps
+                  local opts = { buffer = args.buf, silent = true }
+                  
+                  -- Join lines
+                  vim.keymap.set("n", "<leader>rj", function()
+                    vim.lsp.buf.execute_command({
+                      command = "rust-analyzer.joinLines",
+                      arguments = { vim.uri_from_bufnr(0), vim.lsp.util.make_range_params().range }
+                    })
+                  end, vim.tbl_extend("force", opts, { desc = "Join lines" }))
+                  
+          -- Structural Search Replace
+          vim.keymap.set("n", "<leader>rsr", function()
+            local input = vim.fn.input("Search pattern: ")
+            if input ~= "" then
+              vim.lsp.buf.execute_command({
+                command = "rust-analyzer.ssr",
+                arguments = { input, vim.uri_from_bufnr(0), vim.lsp.util.make_position_params().position }
+              })
+            end
+          end, vim.tbl_extend("force", opts, { desc = "Structural search replace" }))
+        end
+      end,
+          
+          -- Clean up when buffer is deleted
+          vim.api.nvim_create_autocmd("BufDelete", {
+            buffer = bufnr,
+            callback = function()
+              vim.api.nvim_del_augroup_by_id(group)
+            end,
           })
         end
       end,
