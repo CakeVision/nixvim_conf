@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   plugins.lsp = {
     enable = true;
 
@@ -102,11 +103,11 @@
 
           # Check configuration
           checkOnSave = true;
-          check = {
-            command = "clippy"; # Use clippy instead of just check
-            extraArgs = ["--all-targets"]; # Check all targets
-            allTargets = true;
-          };
+          # check = {
+          #   command = "clippy"; # Use clippy instead of just check
+          #   extraArgs = ["--all-targets"]; # Check all targets
+          #   allTargets = true;
+          # };
 
           # Completion settings
           completion = {
@@ -114,9 +115,9 @@
             autoimport = {
               enable = true;
             };
-            callable = {
-              snippets = "fill_arguments";
-            };
+            # callable = {
+            #   snippets = "fill_arguments";
+            # };
           };
 
           # Inlay hints (very useful for Rust!)
@@ -173,32 +174,32 @@
           };
 
           # Lens (code lenses) - shows things like "Run" and "Debug" above functions
-          lens = {
-            enable = true;
-            debug = {
-              enable = true;
-            };
-            implementations = {
-              enable = true;
-            };
-            references = {
-              adt = {
-                enable = false; # Can be noisy, enable if you want
-              };
-              enumVariant = {
-                enable = false;
-              };
-              method = {
-                enable = false;
-              };
-              trait = {
-                enable = false;
-              };
-            };
-            run = {
-              enable = true;
-            };
-          };
+          # lens = {
+          #   enable = true;
+          #   debug = {
+          #     enable = true;
+          #   };
+          #   implementations = {
+          #     enable = true;
+          #   };
+          #   references = {
+          #     adt = {
+          #       enable = false; # Can be noisy, enable if you want
+          #     };
+          #     enumVariant = {
+          #       enable = false;
+          #     };
+          #     method = {
+          #       enable = false;
+          #     };
+          #     trait = {
+          #       enable = false;
+          #     };
+          #   };
+          #   run = {
+          #     enable = true;
+          #   };
+          # };
 
           # Diagnostics
           diagnostics = {
@@ -218,10 +219,126 @@
             };
           };
 
-          # Files configuration
-          files = {
-            watcher = "notify";
+          svelte = {
+            enable = true;
+            settings = {
+              svelte = {
+                plugin = {
+                  html = {
+                    completions = {
+                      enable = true;
+                      emmet = true;
+                    };
+                  };
+                  svelte = {
+                    completions = {
+                      enable = true;
+                    };
+                    diagnostics = {
+                      enable = true;
+                    };
+                    format = {
+                      enable = true;
+                    };
+                    hover = {
+                      enable = true;
+                    };
+                  };
+                  css = {
+                    completions = {
+                      enable = true;
+                      emmet = true;
+                    };
+                    diagnostics = {
+                      enable = true;
+                    };
+                    hover = {
+                      enable = true;
+                    };
+                  };
+                  typescript = {
+                    completions = {
+                      enable = true;
+                    };
+                    diagnostics = {
+                      enable = true;
+                    };
+                    hover = {
+                      enable = true;
+                    };
+                  };
+                };
+              };
+            };
           };
+
+          tsserver = {
+            enable = true;
+            settings = {
+              typescript = {
+                inlayHints = {
+                  includeInlayParameterNameHints = "all";
+                  includeInlayParameterNameHintsWhenArgumentMatchesName = false;
+                  includeInlayFunctionParameterTypeHints = true;
+                  includeInlayVariableTypeHints = true;
+                  includeInlayPropertyDeclarationTypeHints = true;
+                  includeInlayFunctionLikeReturnTypeHints = true;
+                  includeInlayEnumMemberValueHints = true;
+                };
+              };
+              javascript = {
+                inlayHints = {
+                  includeInlayParameterNameHints = "all";
+                  includeInlayParameterNameHintsWhenArgumentMatchesName = false;
+                  includeInlayFunctionParameterTypeHints = true;
+                  includeInlayVariableTypeHints = true;
+                  includeInlayPropertyDeclarationTypeHints = true;
+                  includeInlayFunctionLikeReturnTypeHints = true;
+                  includeInlayEnumMemberValueHints = true;
+                };
+              };
+            };
+          };
+          # HTML and CSS support
+          html = {
+            enable = true;
+          };
+
+          cssls = {
+            enable = true;
+            settings = {
+              css = {
+                validate = true;
+              };
+              less = {
+                validate = true;
+              };
+              scss = {
+                validate = true;
+              };
+            };
+          };
+
+          # Tailwind CSS support (if you use it with Svelte)
+          tailwindcss = {
+            enable = true;
+            settings = {
+              tailwindCSS = {
+                experimental = {
+                  classRegex = [
+                    "class\\s*=\\s*[\"'`]([^\"'`]*)[\"'`]"
+                    "class:\\s*[\"'`]([^\"'`]*)[\"'`]"
+                    "classList\\s*=\\s*\\{[^}]*?[\"'`]([^\"'`]*)[\"'`]"
+                  ];
+                };
+              };
+            };
+          };
+
+          # Files configuration
+          # files = {
+          #   watcher = "client";
+          # };
         };
       };
 
@@ -245,26 +362,62 @@
       #   };
       # };
 
-      # Nix - using nixd instead of nil
-      nixd = {
+      nil_ls = {
         enable = true;
         settings = {
-          nixd = {
+          nil = {
+            # Formatting configuration
             formatting = {
-              command = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
+              command = [ "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt" ];
             };
-            options = {
-              # You can specify your flake here for better completion
-              nixos = {
-                expr = ''(builtins.getFlake "github:NixOS/nixpkgs/nixos-unstable").nixosConfigurations.example.options'';
-              };
-              home_manager = {
-                expr = ''(builtins.getFlake "github:nix-community/home-manager").homeConfigurations.example.options'';
+
+            # Diagnostics configuration
+            diagnostics = {
+              # Ignore specific warnings if they're too noisy
+              ignored = [ ];
+              # Exclude certain files from diagnostics
+              excludedFiles = [ ];
+            };
+
+            # Nix flake support
+            nix = {
+              # Maximum number of completions to show
+              maxMemoryMB = 2048;
+
+              # Binary cache for faster evaluation
+              binary_cache_url = "https://cache.nixos.org";
+
+              # Flake support
+              flake = {
+                # Auto-archive flake inputs for better performance
+                autoArchive = true;
+                # Auto-eval flake outputs
+                autoEvalInputs = true;
               };
             };
           };
         };
       };
+      # Nix - using nixd instead of nil
+      #nixd = {
+      #  enable = true;
+      #  settings = {
+      #    nixd = {
+      #      formatting = {
+      #        command = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
+      #      };
+      #      options = {
+      #        # You can specify your flake here for better completion
+      #        nixos = {
+      #          expr = ''(builtins.getFlake "github:NixOS/nixpkgs/nixos-unstable").nixosConfigurations.example.options'';
+      #        };
+      #        home_manager = {
+      #          expr = ''(builtins.getFlake "github:nix-community/home-manager").homeConfigurations.example.options'';
+      #        };
+      #      };
+      #    };
+      #  };
+      #};
 
       # Lua (for Neovim config)
       lua_ls = {
@@ -275,7 +428,7 @@
               version = "LuaJIT";
             };
             diagnostics = {
-              globals = ["vim"];
+              globals = [ "vim" ];
             };
             workspace = {
               library = [
@@ -343,6 +496,20 @@
     nixpkgs-fmt
     statix
 
+    #Svelte
+    nodePackages.svelte-language-server
+    nodePackages.typescript-language-server
+    nodePackages.vscode-langservers-extracted # Includes HTML, CSS, JSON, ESLint
+    nodePackages."@tailwindcss/language-server" # If using Tailwind
+    nodePackages.prettier # For formatting
+    nodePackages.eslint # For linting
+
+    # Node.js (if not already included)
+    nodejs_20
+
+    # Build tools
+    vite
+
     # Lua tools
     lua-language-server
     stylua
@@ -380,7 +547,10 @@
 
     # Code action menu (alternative binding)
     {
-      mode = ["n" "v"];
+      mode = [
+        "n"
+        "v"
+      ];
       key = "<leader>ca";
       action = "<cmd>lua vim.lsp.buf.code_action()<cr>";
       options = {
@@ -421,7 +591,7 @@
         silent = true;
       };
     }
-     {
+    {
       mode = "n";
       key = "<leader>co";
       action = "<cmd>PyrightOrganizeImports<cr>";
@@ -430,7 +600,69 @@
         silent = true;
       };
     }
-     {
+    {
+      mode = "n";
+      key = "<leader>cs";
+      action.__raw = ''
+        function()
+          local lines = {
+            "<script>",
+            "  // Component logic here",
+            "</script>",
+            "",
+            "<!-- HTML template -->",
+            "<div>",
+            "  ",
+            "</div>",
+            "",
+            "<style>",
+            "  /* Component styles */",
+            "</style>"
+          }
+          vim.api.nvim_put(lines, "l", true, true)
+          -- Move cursor to the script section
+          vim.cmd("normal! 2G$")
+        end
+      '';
+      options = {
+        desc = "Insert Svelte component template";
+        silent = true;
+      };
+    }
+
+    # Format Svelte files with prettier
+    {
+      mode = "n";
+      key = "<leader>fp";
+      action = "<cmd>!prettier --write %<cr>";
+      options = {
+        desc = "Format with Prettier";
+        silent = true;
+      };
+    }
+
+    # Start Vite dev server (assumes you're in a project directory)
+    {
+      mode = "n";
+      key = "<leader>vd";
+      action = "<cmd>terminal npm run dev<cr>";
+      options = {
+        desc = "Start Vite dev server";
+        silent = true;
+      };
+    }
+
+    # Build project
+    {
+      mode = "n";
+      key = "<leader>vb";
+      action = "<cmd>terminal npm run build<cr>";
+      options = {
+        desc = "Build project";
+        silent = true;
+      };
+    }
+    {
       mode = "n";
       key = "<leader>lo";
       action.__raw = ''
@@ -481,128 +713,102 @@
     }
   ];
 
-  
   extraConfigLua = ''
     -- Customize diagnostic signs using the modern API
     local signs = { Error = "✘", Warn = "▲", Hint = "⚡", Info = "ℹ" }
 
     -- Configure diagnostics with signs and other settings
     vim.diagnostic.config({
-      virtual_text = {
-        severity = { min = vim.diagnostic.severity.ERROR },
-      },
-      signs = {
-        text = {
-          [vim.diagnostic.severity.ERROR] = signs.Error,
-          [vim.diagnostic.severity.WARN] = signs.Warn,
-          [vim.diagnostic.severity.HINT] = signs.Hint,
-          [vim.diagnostic.severity.INFO] = signs.Info,
-        },
-      },
-      underline = true,
-      update_in_insert = false,
-      severity_sort = true,
-      float = {
-        border = 'rounded',
-        source = true,
-      },
+    virtual_text = {
+    severity = { min = vim.diagnostic.severity.ERROR },
+    },
+    signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = signs.Error,
+      [vim.diagnostic.severity.WARN] = signs.Warn,
+      [vim.diagnostic.severity.HINT] = signs.Hint,
+      [vim.diagnostic.severity.INFO] = signs.Info,
+    },
+    },
+    underline = true,
+    update_in_insert = false,
+    severity_sort = true,
+    float = {
+    border = 'rounded',
+    source = true,
+    },
     })
 
-    -- Show diagnostics on hover (but only if there are diagnostics)
+    -- Show diagnostics on hover
     vim.api.nvim_create_autocmd("CursorHold", {
-      callback = function()
-        -- Only show diagnostics popup, not document highlight
-        local opts = {
-          focusable = false,
-          close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-          border = 'rounded',
-          source = 'always',
-          prefix = ' ',
-          scope = 'cursor',
-        }
-        -- Only open float if there are diagnostics at cursor position
-        local diagnostics = vim.diagnostic.get(0, { lnum = vim.fn.line('.') - 1 })
-        if #diagnostics > 0 then
-          vim.diagnostic.open_float(nil, opts)
-        end
-      end
+    callback = function()
+    local opts = {
+      focusable = false,
+      close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+      border = 'rounded',
+      source = 'always',
+      prefix = ' ',
+      scope = 'cursor',
+    }
+    vim.diagnostic.open_float(nil, opts)
+    end
     })
 
-    -- Highlight symbol under cursor (with proper capability checking)
+    -- Highlight symbol under cursor
     vim.api.nvim_create_autocmd("LspAttach", {
-      callback = function(args)
-        local client = vim.lsp.get_client_by_id(args.data.client_id)
-        local bufnr = args.buf
-        
-        -- Only set up document highlighting if the server supports it
-        if client and client.server_capabilities.documentHighlightProvider then
-          -- Create a local group for this buffer to avoid conflicts
-          local group = vim.api.nvim_create_augroup("lsp_document_highlight_" .. bufnr, { clear = true })
-          
-          vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-            buffer = bufnr,
-            group = group,
-            callback = function()
-              -- Double check the client is still valid and supports highlighting
-              local current_clients = vim.lsp.get_clients({ bufnr = bufnr })
-              for _, c in ipairs(current_clients) do
-                if c.id == client.id and c.server_capabilities.documentHighlightProvider then
-                  vim.lsp.buf.document_highlight()
-                  break
-                end
-              end
-            end,
-          })
-          
-          vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-            buffer = bufnr,
-            group = group,
-            callback = function()
-              vim.lsp.buf.clear_references()
-            end,
-          })
-         vim.api.nvim_create_autocmd("LspAttach", {
-              callback = function(args)
-                local client = vim.lsp.get_client_by_id(args.data.client_id)
-                if client.name == "rust_analyzer" then
-                  -- Enable inlay hints for Rust files
-                  if client.server_capabilities.inlayHintProvider then
-                    vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
-                  end
-                  
-                  -- Set up Rust-specific keymaps
-                  local opts = { buffer = args.buf, silent = true }
-                  
-                  -- Join lines
-                  vim.keymap.set("n", "<leader>rj", function()
-                    vim.lsp.buf.execute_command({
-                      command = "rust-analyzer.joinLines",
-                      arguments = { vim.uri_from_bufnr(0), vim.lsp.util.make_range_params().range }
-                    })
-                  end, vim.tbl_extend("force", opts, { desc = "Join lines" }))
-                  
-          -- Structural Search Replace
-          vim.keymap.set("n", "<leader>rsr", function()
-            local input = vim.fn.input("Search pattern: ")
-            if input ~= "" then
-              vim.lsp.buf.execute_command({
-                command = "rust-analyzer.ssr",
-                arguments = { input, vim.uri_from_bufnr(0), vim.lsp.util.make_position_params().position }
-              })
-            end
-          end, vim.tbl_extend("force", opts, { desc = "Structural search replace" }))
-        end
-      end,
-          
-          -- Clean up when buffer is deleted
-          vim.api.nvim_create_autocmd("BufDelete", {
-            buffer = bufnr,
-            callback = function()
-              vim.api.nvim_del_augroup_by_id(group)
-            end,
-          })
-        end
-      end,
+    callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client.server_capabilities.documentHighlightProvider then
+      vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+        buffer = args.buf,
+        callback = vim.lsp.buf.document_highlight,
+      })
+      vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+        buffer = args.buf,
+        callback = vim.lsp.buf.clear_references,
+      })
+    end
+    end,
     })
+
+    -- Rust-analyzer specific features
+    vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client.name == "rust_analyzer" then
+      -- Enable inlay hints for Rust files
+      if client.server_capabilities.inlayHintProvider then
+        vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
+      end
+      
+      -- Set up Rust-specific keymaps
+      local opts = { buffer = args.buf, silent = true }
+      
+      -- Join lines
+      vim.keymap.set("n", "<leader>rj", function()
+        vim.lsp.buf.execute_command({
+          command = "rust-analyzer.joinLines",
+          arguments = { vim.uri_from_bufnr(0), vim.lsp.util.make_range_params().range }
+        })
+      end, vim.tbl_extend("force", opts, { desc = "Join lines" }))
+      
+      -- Structural Search Replace
+      vim.keymap.set("n", "<leader>rsr", function()
+        local input = vim.fn.input("Search pattern: ")
+        if input ~= "" then
+          vim.lsp.buf.execute_command({
+            command = "rust-analyzer.ssr",
+            arguments = { input, vim.uri_from_bufnr(0), vim.lsp.util.make_position_params().position }
+          })
+        end
+      end, vim.tbl_extend("force", opts, { desc = "Structural search replace" }))
+    end
+    end,
+    })
+
+    -- Toggle inlay hints
+    vim.keymap.set("n", "<leader>th", function()
+    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+    end, { desc = "Toggle inlay hints" })
   '';
 }

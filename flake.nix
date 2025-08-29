@@ -7,12 +7,17 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    remote-nvim = {
+      url = "github:amitds1997/remote-nvim.nvim";
+      flake = false;
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     nixvim,
+    remote-nvim,
     ...
   }: let
     systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
@@ -21,7 +26,10 @@
     packages = forEachSystem (system: {
       default = nixvim.legacyPackages.${system}.makeNixvimWithModule {
         pkgs = nixpkgs.legacyPackages.${system};
-        module = ./config;
+        module = {
+          imports = [./config];
+          _module.args = {inherit remote-nvim; };
+        };
       };
     });
   };

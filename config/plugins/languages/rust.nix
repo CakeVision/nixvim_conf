@@ -2,7 +2,7 @@
   # Additional Rust-specific plugins that work well with rust-analyzer
   plugins = {
     # Crates.nvim for Cargo.toml management
-    crates-nvim = {
+    crates = {
       enable = true;
       settings = {
         # Show popup with crate information
@@ -11,10 +11,10 @@
           border = "rounded";
         };
         # Enable null-ls integration
-        null_ls = {
-          enabled = true;
-          name = "crates.nvim";
-        };
+        # null_ls = {
+        #   enabled = true;
+        #   name = "crates.nvim";
+        # };
       };
     };
 

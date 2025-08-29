@@ -27,6 +27,9 @@
           scope_incremental = "<TAB>"; # Increment to next scope
         };
       };
+      autotag = {
+        enable = true;
+      };
     };
   };
 

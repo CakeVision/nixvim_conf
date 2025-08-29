@@ -10,6 +10,7 @@
     ./completion.nix
     ./colorscheme.nix
     ./refactoring
+    ./remote.nix
     #Plugin dir
     ./telescope
   ];
